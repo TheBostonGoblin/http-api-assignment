@@ -1,0 +1,26 @@
+{
+  "name": "http-api-assignment",
+  "version": "1.0.0",
+  "description": "this is the http api assignment that i am currently completing so i can have a better understanding of server creation",
+  "main": "server.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheBostonGoblin/http-api-assignment.git"
+  },
+  "author": "Daniel Joseph Jr",
+  "license": "UNLICENCED",
+  "bugs": {
+    "url": "https://github.com/TheBostonGoblin/http-api-assignment/issues"
+  },
+  "homepage": "https://github.com/TheBostonGoblin/http-api-assignment#readme",
+  "devDependencies": {
+    "eslint": "^8.23.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.26.0"
+  }
+}

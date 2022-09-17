@@ -1,13 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>Our simple HTTP server</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
-  
-  <script>
 
+  <script>
+    const handleResponse = (response) => {
+
+      const content = document.querySelector("#content");
+
+      switch (response.status) {
+        case 200:
+          content.innerHTML = "<b>Success</b>"
+          break;
+        case 400:
+          content.innerHTML = "<b>Bad Request</b>"
+          break;
+        case 401:
+          content.innerHTML = "<b>Unauthorized</b>"
+          break;
+        case 403:
+          content.innerHTML = "<b>Forbidden</b>"
+          break;
+        case 404:
+          content.innerHTML = "<b>Not Found</b>"
+          break;
+        case 500:
+          content.innerHTML = "<b>Internal Server Issue</b>"
+          break;
+        case 501:
+          content.innerHTML = "<b>Not Implimented</b>"
+          break;
+        default:
+          content.innerHTML = "<b>Not Found</b>"
+          break;
+      }
+      response.text().then((resText) => {
+        content.appendChild(document.createElement('hr'));
+        const message = document.createElement('h1');
+        const contentType = response.headers.get('Content-Type');
+
+        if (contentType === 'application/json') {
+          const parsedResponseJSON = JSON.parse(resText);
+          message.textContent = `Message:${parsedResponseJSON.message}`;
+        }
+        else if (contentType === 'text/xml') {
+          const paredResponseXML = new window.DOMParser().parseFromString(resText, 'text/xml');
+          message.textContent = `Message:${paredResponseXML.querySelector('message').textContent}`;
+        }
+        else {//default to JSON
+          const parsedResponseJSON = JSON.parse(resText);
+          message.textContent = `Message:${parsedResponseJSON.message}`;
+        }
+        content.appendChild(message);
+      })
+    }
+    const sendFetchRequest = (url, acceptedType) => {
+
+      const options = {
+        method: 'GET',
+        headers: { 'Accept': acceptedType },
+      }
+
+      const fetchPromise = fetch(url, options);
+
+      fetchPromise.then((response) => { handleResponse(response) });
+    };
+    const init = () => {
+      const statusSelect = document.querySelector("#page");
+      const dataTypeSelect = document.querySelector("#type");
+      const sendButton = document.querySelector("#send");
+
+      sendButton.addEventListener('click', () => {
+        let currentStatus = statusSelect.options[statusSelect.selectedIndex].value;
+        let currentDataType = dataTypeSelect.options[dataTypeSelect.selectedIndex].value;
+        sendFetchRequest(currentStatus, currentDataType);
+        console.log(`Status:${currentStatus},Data:${currentDataType}`);
+      });
+
+    }
+
+    window.onload = init;
   </script>
 </head>
+
 <body>
   <section id="top">
     <h3>Status Code Tests</h3>
@@ -16,9 +93,9 @@
       <option value="/badRequest">Bad Request</option>
       <option value="/unauthorized">Unauthorized</option>
       <option value="/forbidden">Forbidden</option>
+      <option value="/notFound">Not Found</option>
       <option value="/internal">Internal</option>
       <option value="/notImplemented">Not Implemented</option>
-      <option value="/notFound">Not Found</option>
     </select>
     <select id="type">
       <option value="application/json">JSON</option>
@@ -29,4 +106,5 @@
   <section id="content">
   </section>
 </body>
+
 </html>
